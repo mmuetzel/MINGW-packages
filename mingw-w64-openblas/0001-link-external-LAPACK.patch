@@ -1,0 +1,31 @@
+Optionally, link with external LAPACK instead of building it.
+
+diff -urN CMakeLists.txt.orig CMakeLists.txt
+--- a/CMakeLists.txt.orig	2021-12-21 19:03:30.989601200 +0100
++++ b/CMakeLists.txt	2022-01-20 11:21:46.751443300 +0100
+@@ -26,6 +26,9 @@
+   option(BUILD_WITHOUT_LAPACK "Do not build LAPACK and LAPACKE (Only BLAS or CBLAS)" ON)
+ endif()
+ 
++option(LINK_EXTERNAL_LAPACK "Link with external LAPACK (instead of building it)" OFF)
++set(EXTERNAL_LAPACK_LDFLAGS "" CACHE STRING "LDFLAGS used for linking external LAPACK")
++
+ option(BUILD_WITHOUT_CBLAS "Do not build the C interface (CBLAS) to the BLAS functions" OFF)
+ 
+ option(DYNAMIC_ARCH "Include support for multiple CPU targets, with automatic selection at runtime (x86/x86_64, aarch64 or ppc only)" OFF)
+@@ -334,6 +337,15 @@
+   endif()
+ endif()
+ 
++if (LINK_EXTERNAL_LAPACK AND NOT ${EXTERNAL_LAPACK_LDFLAGS} STREQUAL "")
++  if(BUILD_STATIC_LIBS)
++    target_link_libraries(${OpenBLAS_LIBNAME}_static ${EXTERNAL_LAPACK_LDFLAGS})
++  endif()
++  if(BUILD_SHARED_LIBS)
++    target_link_libraries(${OpenBLAS_LIBNAME}_shared ${EXTERNAL_LAPACK_LDFLAGS})
++  endif()
++endif()
++
+ if (BUILD_SHARED_LIBS AND NOT ${SYMBOLPREFIX}${SYMBOLSUFFIX} STREQUAL "")
+   if (NOT DEFINED ARCH)
+     set(ARCH_IN "x86_64")
