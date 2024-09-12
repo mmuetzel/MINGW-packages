@@ -10,7 +10,7 @@ pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 pkgver=16.0.0
 _pkgver=${pkgver//./-}
-pkgrel=2
+pkgrel=3
 pkgdesc='Algorithms for the solution of large-scale scientific problems" (mingw-w64)'
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64')
@@ -22,8 +22,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-python"
          "${MINGW_PACKAGE_PREFIX}-boost"
          "${MINGW_PACKAGE_PREFIX}-netcdf"
          "${MINGW_PACKAGE_PREFIX}-matio"
-         "${MINGW_PACKAGE_PREFIX}-hdf5"
-         "${MINGW_PACKAGE_PREFIX}-msmpi")
+         "${MINGW_PACKAGE_PREFIX}-hdf5")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-ninja"
@@ -31,6 +30,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-perl"
              "${MINGW_PACKAGE_PREFIX}-bc"
              "${MINGW_PACKAGE_PREFIX}-python-numpy"
+             "${MINGW_PACKAGE_PREFIX}-msmpi"
              "unzip")
 optdepends=("${MINGW_PACKAGE_PREFIX}-seacas")
 source=("https://github.com/${_realname}/Trilinos/archive/${_realname}-release-${_pkgver}.tar.gz")
@@ -42,7 +42,9 @@ prepare(){
   tar -xzf ${_realname}-release-${_pkgver}.tar.gz || true
 }
 
-build() {
+_build_trilinos() {
+  _static_opt=$1
+
   declare -a extra_config
   if check_option "debug" "n"; then
     extra_config+=("-DCMAKE_BUILD_TYPE=Release")
@@ -50,12 +52,10 @@ build() {
     extra_config+=("-DCMAKE_BUILD_TYPE=Debug")
   fi
 
-  #Static Build
-  mkdir -p "${srcdir}/build-${MSYSTEM}-static" && cd "${srcdir}/build-${MSYSTEM}-static"
-
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
     ${MINGW_PREFIX}/bin/cmake \
       -GNinja \
+      ${_static_opt} \
       -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
       "${extra_config[@]}" \
       -DBLAS_LIBRARY_NAMES="openblas" \
@@ -64,50 +64,44 @@ build() {
       -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES=ON \
       -DTrilinos_ENABLE_ALL_PACKAGES=ON \
       -DTPL_ENABLE_DLlib=OFF \
+      -DTPL_ENABLE_MPI=ON \
       -DTrilinos_ENABLE_Xpetra=OFF \
       -DTrilinos_ENABLE_Epetra=ON \
+      -DTrilinos_ENABLE_EpetraExt=ON \
       -DTrilinos_ENABLE_Intrepid2=OFF \
       -DTrilinos_ENABLE_SEACAS=OFF \
+      -DTrilinos_ENABLE_Ifpack=ON \
+      -DTrilinos_ENABLE_ML=ON \
+      -DTrilinos_ENABLE_AztecOO=ON \
       -DCMAKE_Fortran_FLAGS="$FCFLAGS -fallow-argument-mismatch" \
       ../Trilinos-${_realname}-release-${_pkgver}
-      
-  ${MINGW_PREFIX}/bin/cmake --build .
-      
-  #Shared Build
-  mkdir -p "${srcdir}/build-${MSYSTEM}-shared" && cd "${srcdir}/build-${MSYSTEM}-shared"
 
-  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
-    ${MINGW_PREFIX}/bin/cmake \
-      -GNinja \
-      -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-      "${extra_config[@]}" \
-      -DBUILD_SHARED_LIBS=ON \
-      -DBLAS_LIBRARY_NAMES="openblas" \
-      -DLAPACK_LIBRARY_NAMES="openblas" \
-      -DTrilinos_ENABLE_Fortran=$([[ ${MINGW_PACKAGE_PREFIX} != *-clang-* ]] && echo "ON" || echo "OFF") \
-      -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES=ON \
-      -DTrilinos_ENABLE_ALL_PACKAGES=ON \
-      -DTPL_ENABLE_DLlib=OFF \
-      -DTrilinos_ENABLE_Xpetra=OFF \
-      -DTrilinos_ENABLE_Epetra=ON \
-      -DTrilinos_ENABLE_Intrepid2=OFF \
-      -DTrilinos_ENABLE_SEACAS=OFF \
-      -DCMAKE_Fortran_FLAGS="$FCFLAGS -fallow-argument-mismatch" \
-      ../Trilinos-${_realname}-release-${_pkgver}
-      
   ${MINGW_PREFIX}/bin/cmake --build .
 }
 
+build() {
+  # Static Build
+  mkdir -p "${srcdir}/build-${MSYSTEM}-static" && cd "${srcdir}/build-${MSYSTEM}-static"
+
+  _build_trilinos "-DBUILD_SHARED_LIBS=OFF"
+
+  # Shared Build
+  mkdir -p "${srcdir}/build-${MSYSTEM}-shared" && cd "${srcdir}/build-${MSYSTEM}-shared"
+
+  _build_trilinos "-DBUILD_SHARED_LIBS=ON"
+}
+
 package() {
-  #Static Install
+  # Static Install
   cd "${srcdir}/build-${MSYSTEM}-static"
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install .
 
-  #Shared Install
+  # Shared Install
   cd "${srcdir}/build-${MSYSTEM}-shared"
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install .
+
   install -Dm644 "${srcdir}"/Trilinos-${_realname}-release-${_pkgver}/LICENSE "${pkgdir}"${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE
 
   # Remove conflict with seacas package
-  #rm -r "${pkgdir}"${MINGW_PREFIX}/lib/external_packages/DLlib
+  # rm -r "${pkgdir}"${MINGW_PREFIX}/lib/external_packages/DLlib
 }
