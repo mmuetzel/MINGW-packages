@@ -41,10 +41,12 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
 source=("https://github.com/MapServer/MapServer/archive/${_pkgver}/${_realname}-${_pkgver}.tar.gz"
         'https://ftp.gnu.org/old-gnu/regex/regex-0.12.tar.gz'
         '0001-mapserver-8.0.0-find-iconv.patch'
+        '0002-gcc-14.patch'
         '0004-mapserver-8.0.0-dest-relative.patch')
 sha256sums=('17c72032ad6bc8786bfbdbdd514d4d21d587390128c368ab8d857217fa7bcf7a'
             'f36e2d8d56bf15054a850128fcb2f51807706a92d3bb4b37ceadd731535ce230'
             '26a0503fe6fb02516910c624959c2de48d6574709e28d632fdf0177bad3edaf2'
+            '6dd9af756bb5de3f750c08e66cc73eb6a246a6e63354d524849550100595e1b3'
             '6d66fbbdda99b7c794f5f7f9885a02f0727424a15774eeaf4d99a99876a85cbb')
 
 apply_patch_with_msg() {
@@ -60,6 +62,7 @@ prepare() {
 
   apply_patch_with_msg \
     0001-mapserver-8.0.0-find-iconv.patch \
+    0002-gcc-14.patch \
     0004-mapserver-8.0.0-dest-relative.patch
 }
 

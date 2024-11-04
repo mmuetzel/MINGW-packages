@@ -1,0 +1,27 @@
+Explicitly cast `unsigned char *` to `char *` to avoid invalid conversion
+error with GCC 14 or newer.
+
+diff -urN MapServer-rel-8-0-2/renderers/agg/src/agg_font_freetype.cpp.orig MapServer-rel-8-0-2/renderers/agg/src/agg_font_freetype.cpp
+--- MapServer-rel-8-0-2/renderers/agg/src/agg_font_freetype.cpp.orig	2024-06-11 22:41:34.000000000 +0200
++++ MapServer-rel-8-0-2/renderers/agg/src/agg_font_freetype.cpp	2024-11-04 19:57:08.243220000 +0100
+@@ -174,7 +174,7 @@
+             FT_Vector v_control = v_start;
+ 
+             point = outline.points + first;
+-            tags  = outline.tags  + first;
++            tags  = reinterpret_cast<char *> (outline.tags) + first;
+             tag   = FT_CURVE_TAG(tags[0]);
+ 
+             // A contour cannot start with a cubic control point!
+diff -urN MapServer-rel-8-0-2/mapagg.cpp.orig MapServer-rel-8-0-2/mapagg.cpp
+--- MapServer-rel-8-0-2/mapagg.cpp.orig	2024-06-11 22:41:34.000000000 +0200
++++ MapServer-rel-8-0-2/mapagg.cpp	2024-11-04 20:00:03.491449300 +0100
+@@ -309,7 +309,7 @@
+     FT_Vector v_control = v_start;
+ 
+     point = outline.points + first;
+-    tags = outline.tags + first;
++    tags = reinterpret_cast<char *> (outline.tags) + first;
+     tag = FT_CURVE_TAG(tags[0]);
+ 
+     // A contour cannot start with a cubic control point!
