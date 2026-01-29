@@ -7,7 +7,7 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
            "${MINGW_PACKAGE_PREFIX}-${_realname}-gnutls" \
            "${MINGW_PACKAGE_PREFIX}-${_realname}-winssl"))
 pkgver=8.18.0
-pkgrel=2
+pkgrel=3
 pkgdesc="Command line tool and library for transferring data with URLs (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -34,7 +34,7 @@ _gnutls_depends=("${MINGW_PACKAGE_PREFIX}-rtmpdump"
                  "${MINGW_PACKAGE_PREFIX}-nghttp3"
                  "${MINGW_PACKAGE_PREFIX}-ngtcp2")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
-             "${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-cmake-bootstrap"
              "${MINGW_PACKAGE_PREFIX}-ninja"
              "${_cert_depends[@]}"
              "${_openssl_depends[@]}"
