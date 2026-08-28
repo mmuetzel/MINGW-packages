@@ -8,21 +8,21 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
          "${MINGW_PACKAGE_PREFIX}-${_realname}64-metis")
 pkgdesc='Graph partitioning and sparse matrix ordering package (mingw-w64)'
 pkgver=7.0.12
-pkgrel=2
+pkgrel=3
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
 url="https://www.labri.fr/perso/pelegrin/scotch/"
 msys2_repository_url="https://gitlab.inria.fr/scotch/scotch"
 license=('spdx:CECILL-C')
 depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
+         $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-msmpi")
          "${MINGW_PACKAGE_PREFIX}-xz"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-fc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
-             "${MINGW_PACKAGE_PREFIX}-ninja"
+             "${MINGW_PACKAGE_PREFIX}-ninja")
              #"${MINGW_PACKAGE_PREFIX}-libgnurx"
-             $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-msmpi"))
 options=('!strip')
 source=("https://gitlab.inria.fr/scotch/scotch/-/archive/v${pkgver}/${_realname}-v${pkgver}.tar.gz"
         "001-include-missing-header-on-windows.patch")
