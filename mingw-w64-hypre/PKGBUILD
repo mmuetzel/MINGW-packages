@@ -4,7 +4,7 @@ _realname=hypre
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 pkgver=2.33.0
-pkgrel=1
+pkgrel=2
 pkgdesc='A library for solving large, sparse linear systems on massively parallel computers (mingw-w64)'
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -15,14 +15,15 @@ msys2_references=(
   'aur: hypre'
 )
 license=('spdx:Apache-2.0 OR MIT')
-depends=("${MINGW_PACKAGE_PREFIX}-openblas"
+depends=("${MINGW_PACKAGE_PREFIX}-omp"
+         "${MINGW_PACKAGE_PREFIX}-openblas"
          "${MINGW_PACKAGE_PREFIX}-superlu"
-         $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-superlu_dist")
-         "${MINGW_PACKAGE_PREFIX}-omp")
+         $([[ ${CARCH} == aarch64 ]] || echo \
+           "${MINGW_PACKAGE_PREFIX}-msmpi" \
+           "${MINGW_PACKAGE_PREFIX}-superlu_dist"))
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-ninja"
-             "${MINGW_PACKAGE_PREFIX}-cmake"
-             $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-msmpi"))
+             "${MINGW_PACKAGE_PREFIX}-cmake")
 source=("https://github.com/hypre-space/hypre/archive/v${pkgver}/${_realname}-${pkgver}.tar.gz"
         "0001-fix-win32-check.patch"
         "0002-dsuperlu-cpu.patch")
