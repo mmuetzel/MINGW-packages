@@ -19,6 +19,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-cc-libs"
          "${MINGW_PACKAGE_PREFIX}-netcdf"
          "${MINGW_PACKAGE_PREFIX}-metis"
          "${MINGW_PACKAGE_PREFIX}-mpfr"
+         $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-msmpi")
          #$([[ ${MINGW_PACKAGE_PREFIX} == *-clang-* ]] || echo "${MINGW_PACKAGE_PREFIX}-mumps")
          "${MINGW_PACKAGE_PREFIX}-omp"
          "${MINGW_PACKAGE_PREFIX}-openblas"
@@ -30,8 +31,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-cc-libs"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
-             "${MINGW_PACKAGE_PREFIX}-ninja"
-             $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-msmpi"))
+             "${MINGW_PACKAGE_PREFIX}-ninja")
 source=("$msys2_repository_url/archive/v$pkgver/${_realname}-${pkgver}.tar.gz")
 sha256sums=('ea3ac13e182c09f05b414b03a9bef7a4da99d45d67ee409112b8f11058447a7c')
 
