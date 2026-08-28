@@ -37,7 +37,7 @@ _realname=petsc
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}" "${MINGW_PACKAGE_PREFIX}-${_realname}-build")
 pkgver=3.25.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Sparse iterative (non)linear solver package (mingw-w64)'
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -52,13 +52,13 @@ depends=("${MINGW_PACKAGE_PREFIX}-cc-libs"
          "${MINGW_PACKAGE_PREFIX}-hwloc"
          "${MINGW_PACKAGE_PREFIX}-metis"
          $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-parmetis")
+         $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-msmpi")
          "${MINGW_PACKAGE_PREFIX}-omp"
          "${MINGW_PACKAGE_PREFIX}-openblas")
 makedepends=('python'
              "${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-fc"
-             "${MINGW_PACKAGE_PREFIX}-pkgconf"
-             $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-msmpi"))
+             "${MINGW_PACKAGE_PREFIX}-pkgconf")
 optdepends=("${MINGW_PACKAGE_PREFIX}-tcl: build & run test suite")
 source=("https://web.cels.anl.gov/projects/petsc/download/release-snapshots/${_realname}-${pkgver}.tar.gz"
         'petsc.tcl'
