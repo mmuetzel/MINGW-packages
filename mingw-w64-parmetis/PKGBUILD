@@ -4,7 +4,7 @@ _realname=parmetis
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 pkgver=4.0.3
-pkgrel=4
+pkgrel=5
 pkgdesc="Parallel Graph Partitioning and Fill-reducing Matrix Ordering (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64')
@@ -13,10 +13,10 @@ msys2_references=(
   'gentoo: '
 )
 license=('custom')
-depends=("${MINGW_PACKAGE_PREFIX}-metis")
+depends=("${MINGW_PACKAGE_PREFIX}-metis"
+         "${MINGW_PACKAGE_PREFIX}-msmpi")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
-             "${MINGW_PACKAGE_PREFIX}-cmake"
-             "${MINGW_PACKAGE_PREFIX}-msmpi")
+             "${MINGW_PACKAGE_PREFIX}-cmake")
 source=("https://salsa.debian.org/science-team/parmetis/-/archive/upstream/${pkgver}/parmetis-upstream-${pkgver}.tar.bz2"
         "0001-mingw-w64-does-not-have-sys-resource-h.patch"
         "0002-mingw-w64-do-not-use-reserved-double-underscored-names.patch"
@@ -51,6 +51,7 @@ build() {
       ${MINGW_PREFIX}/bin/cmake                    \
         -G'Ninja'                         \
         -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX}     \
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5         \
         -DCMAKE_C_COMPILER=mpicc                   \
         -DCMAKE_CXX_COMPILER=mpicxx                \
         -DCMAKE_C_FLAGS="${CPPFLAGS} ${CFLAGS}"    \
