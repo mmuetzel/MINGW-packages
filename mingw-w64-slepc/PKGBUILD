@@ -28,7 +28,7 @@ _realname=slepc
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 pkgver=3.25.0
-pkgrel=2
+pkgrel=3
 pkgdesc="Scalable library for eigenvalue problem computations (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -41,11 +41,11 @@ license=('spdx:BSD-2-Clause')
 depends=("${MINGW_PACKAGE_PREFIX}-petsc"
          "${MINGW_PACKAGE_PREFIX}-cc-libs"
          "${MINGW_PACKAGE_PREFIX}-fc-libs"
+         $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-msmpi")
          "${MINGW_PACKAGE_PREFIX}-openblas")
 makedepends=("python"
              "${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-pkgconf"
-             $([[ ${CARCH} == aarch64 ]] || echo "${MINGW_PACKAGE_PREFIX}-msmpi")
              "${MINGW_PACKAGE_PREFIX}-fc"
              "${MINGW_PACKAGE_PREFIX}-petsc-build")
 optdepends=("${MINGW_PACKAGE_PREFIX}-tcl: build & run test suite")
